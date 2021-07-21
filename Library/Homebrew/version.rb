@@ -115,7 +115,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when NullToken
@@ -158,7 +158,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when StringToken
@@ -184,7 +184,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when NumericToken
@@ -216,7 +216,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when AlphaToken
@@ -235,7 +235,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when BetaToken
@@ -256,7 +256,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when PreToken
@@ -277,7 +277,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when RCToken
@@ -298,7 +298,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when PatchToken
@@ -317,7 +317,7 @@ class Version
 
     sig { override.params(other: T.untyped).returns(T.nilable(Integer)) }
     def <=>(other)
-      return unless other = Token.from(other)
+      return unless (other = Token.from(other))
 
       case other
       when PostToken
@@ -415,7 +415,15 @@ class Version
     # e.g. foobar-4.5.1-1
     # e.g. unrtf_0.20.4-1
     # e.g. ruby-1.9.1-p243
-    StemParser.new(/[_-](#{NUMERIC_WITH_DOTS}-(?:p|rc|RC)?\d+)#{CONTENT_SUFFIX}?$/),
+    StemParser.new(/[_-](#{NUMERIC_WITH_DOTS}-(?:p|P|rc|RC)?\d+)#{CONTENT_SUFFIX}?$/),
+
+    # Hyphenated versions without software-name prefix (e.g. brew-)
+    # e.g. v0.0.8-12.tar.gz
+    # e.g. 3.3.04-1.tar.gz
+    # e.g. v2.1-20210510.tar.gz
+    # e.g. 2020.11.11-3.tar.gz
+    # e.g. v3.6.6-0.2
+    StemParser.new(/^v?(#{NUMERIC_WITH_DOTS}(?:-#{NUMERIC_WITH_OPTIONAL_DOTS})+)/),
 
     # URL with no extension
     # e.g. https://waf.io/waf-1.8.12
@@ -589,15 +597,15 @@ class Version
   end
 
   # @api public
-  sig { returns(Version) }
+  sig { returns(T.self_type) }
   def major_minor
-    Version.new([major, minor].compact.join("."))
+    self.class.new([major, minor].compact.join("."))
   end
 
   # @api public
-  sig { returns(Version) }
+  sig { returns(T.self_type) }
   def major_minor_patch
-    Version.new([major, minor, patch].compact.join("."))
+    self.class.new([major, minor, patch].compact.join("."))
   end
 
   sig { returns(T::Boolean) }
